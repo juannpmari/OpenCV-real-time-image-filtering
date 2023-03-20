@@ -1,7 +1,8 @@
 import cv2
 import numpy
-# import scipy.interpolate
+import scipy.interpolate
 
+#region curves
 def createCurveFunc(points):
     """Return a function derived from control points"""
     if points is None:
@@ -51,4 +52,4 @@ def createFlatView(array):
     flatView.shape = array.size
     return flatView
 
-
+#endregion
