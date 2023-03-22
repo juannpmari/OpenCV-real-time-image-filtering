@@ -16,7 +16,7 @@ def createCurveFunc(points):
         #quadratic is not implemented
     else:
         kind = 'cubic'
-    return scipy.interpolate.interp1d(xs, ys, kind, bound_error = False)
+    return scipy.interpolate.interp1d(xs, ys, kind)#, bound_error = False)
 
 def createLookupArray(func, length = 256):
     """Return a lookup for whole-number inputs to a function
