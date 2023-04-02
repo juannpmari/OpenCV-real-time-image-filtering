@@ -13,4 +13,4 @@ This app takes video stream from webcam and applies different processing techniq
 * Real-time face tracking and swapping:
     * Uses Haar Cascades to track face, eyes and nose and swaps faces when there two or more faces on the screen
 * Dynamic filtering:
-    * Different filters available, based on techniques such as channel-mixing, color-mapping and 2D convolution
+    * Different filters available, based on techniques such as channel-mixing, curve-based filters and 2D convolution

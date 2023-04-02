@@ -74,7 +74,7 @@ class Cameo(object):
             self._channel_mixing_filter.filter_num = 0
         elif keycode == 27: #escape
             self._windowManager.destroyWindow()
-
+    
 if __name__=="__main__":
     Cameo().run()
 
