@@ -13,7 +13,7 @@ class Face(object):
         self.mouthRect = None
 
 class FaceTracker(object):
-    """A tracker for facil features: face, eyes, nose, mouth"""
+    """A tracker for facial features: face, eyes, nose, mouth"""
 
     def __init__(self,scaleFactor = 1.2, minNeighbors = 2, flags = cv2.CASCADE_SCALE_IMAGE):
         
@@ -21,7 +21,7 @@ class FaceTracker(object):
         self.minNeighbors = minNeighbors
         self.flags = flags
 
-        self._faces = []
+        self._faces = [] #List of tracked faces
 
         self._faceClassifier = cv2.CascadeClassifier('cascades/haarcascade_frontalface_alt.xml')
         self._eyeClassifier = cv2.CascadeClassifier('cascades/haarcascade_eye.xml')
@@ -38,10 +38,10 @@ class FaceTracker(object):
 
         self._faces = []
 
-        if utils.isGray(image):
-            image = cv2.equalizeHist(image)
-        else:
+        if not utils.isGray(image):
             image = cv2.cvtColor(image,cv2.COLOR_BGR2GRAY)
+        image = cv2.equalizeHist(image)
+
         
         minSize = utils.widthHeightDividedBy(image, 8)
 
@@ -100,19 +100,13 @@ class FaceTracker(object):
     
     def drawDebugRects(self,image):
         """Draw rectangles around the tracked facial features"""
+        isGray = utils.isGray(image)
+        faceColor = 255 if isGray else (255,255,255)
+        leftEyeColor = 255 if isGray else (0,0,255)
+        rightEyeColor = 255 if isGray else (0,255,255)
+        noseColor = 255 if isGray else (0,255,0)
+        mouthColor = 255 if isGray else (255,0,0)
 
-        if utils.isGray(image):
-            faceColor = 255
-            leftEyeColor = 255
-            rightEyeColor = 255
-            noseColor = 255
-            mouthColor = 255
-        else:
-            faceColor = (255,255,255)
-            leftEyeColor = (0,0,255)
-            rightEyeColor = (0,255,255)
-            noseColor = (0,255,0)
-            mouthColor = (255,0,0)
         for face in self.faces:
             rects.outlineRect(image,face.faceRect,faceColor)
             rects.outlineRect(image,face.leftEyeRect,leftEyeColor)

@@ -1,6 +1,7 @@
 import cv2
 from managers import WindowManager, CaptureManager
 import filters
+from filters import ChannelMixing
 import rects
 from trackers import FaceTracker
 
@@ -8,11 +9,14 @@ class Cameo(object):
 
     def __init__(self):
         self._windowManager = WindowManager('Cameo',self.onKeypress)
-        self._captureManager = CaptureManager(cv2.VideoCapture(0),self._windowManager,True)
+        self._captureManager = CaptureManager(cv2.VideoCapture(0),self._windowManager,False)
+        self._channel_mixing_filter = ChannelMixing()
         self._faceTracker = FaceTracker()
         self._shouldDrawDebugRects = False
-        # self._curveFilter = filters.BGRPortraCurveFilter()
-        # self._curveFilter = filters.EmbossFilter()
+        self._curveFilter = [filters.BGRPortraCurveFilter(),
+                             filters.EmbossFilter(),filters.SharpenFilter(),filters.FindEdgesFilter(),filters.BlurFilter() ]
+        self._curveFilterNum = 0
+        self._enable_edge_detection = False
     
     def run(self):
         """Run the main loop"""
@@ -21,15 +25,18 @@ class Cameo(object):
             self._captureManager.enterFrame()
             frame = self._captureManager.frame
 
+            #Face tracking
             self._faceTracker.update(frame)
             faces = self._faceTracker.faces
             rects.swapRects(frame, frame,[face.faceRect for face in faces])
 
-            # filters.recolorCMV(frame,frame)
-
-            # filters.strokeEdges(frame, frame)
-            # self._curveFilter.apply(frame,frame)
-
+            #Filtering
+            self._channel_mixing_filter.apply(frame,frame)
+            if self._curveFilterNum > 0:
+                self._curveFilter[self._curveFilterNum-1].apply(frame,frame)
+            if self._enable_edge_detection:
+                filters.strokeEdges(frame, frame)
+            
             if self._shouldDrawDebugRects:
                 self._faceTracker.drawDebugRects(frame)
 
@@ -52,6 +59,19 @@ class Cameo(object):
                 self._captureManager.stopWritingVideo()
         elif keycode == 120: #x
             self._shouldDrawDebugRects = not self._shouldDrawDebugRects
+        elif keycode == 99: #c
+            self._channel_mixing_filter.filter_num += 1
+        elif keycode == 102: #f
+            if self._curveFilterNum < len(self._curveFilter):
+                self._curveFilterNum += 1 
+            else:
+                self._curveFilterNum = 0
+        elif keycode == 101: #e
+            self._enable_edge_detection = not self._enable_edge_detection
+        elif keycode == 100: #d
+            self._enable_edge_detection = False
+            self._curveFilterNum = 0
+            self._channel_mixing_filter.filter_num = 0
         elif keycode == 27: #escape
             self._windowManager.destroyWindow()
 
@@ -61,10 +81,4 @@ if __name__=="__main__":
 
 
 
-
-#Links a leer
-# https://realpython.com/python-property/#the-getter-and-setter-approach-in-python
-# https://www.programiz.com/python-programming/property
-# https://en.wikipedia.org/wiki/Callback_(computer_programming)#:~:text=In%20computer%20programming%2C%20a%20callback,as%20part%20of%20its%20job.
-# https://medium.com/understand-the-python/understanding-the-asterisk-of-python-8b9daaa4a558
 

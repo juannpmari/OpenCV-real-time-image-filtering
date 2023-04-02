@@ -21,8 +21,8 @@ def swapRects(src,dst,rects,interpolation = cv2.INTER_LINEAR):
 
     if dst is not src:
         dst[:] = src
+
     numRects = len(rects)
-    
     if numRects < 2:
         return
     
@@ -35,6 +35,5 @@ def swapRects(src,dst,rects,interpolation = cv2.INTER_LINEAR):
     while i >= 0:
         copyRect(src,dst,rects[i],rects[i+1],interpolation)
         i -= 1
-    #Copy the temporaroly stored content into the first rectangle
+    #Copy the temporarily stored content into the first rectangle
     copyRect(temp,dst,(0,0,w,h),rects[0],interpolation)
-    
