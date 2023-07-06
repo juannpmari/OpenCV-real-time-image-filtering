@@ -1,6 +1,6 @@
 # Cameo
 
-This app takes video stream from webcam and applies different processing techniques in real time, which can be selected using the keyboard:
+This app takes real time video stream from webcam and applies different processing techniques, which can be selected using the keyboard:
   * space: take screenshot. Saved as /screenshot.png
   * tab: start/stop video recording. Saved as /screencast.avi
   * x: start/stop bounding box drawing for real time face tracking
